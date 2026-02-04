@@ -273,20 +273,23 @@ function renderTable(rows) {
 }
 
 function showImage(page) {
-  const imgPath = `../images/${page}.jpg`;
+  const imgPath = `/cables/images/${page}.jpg`;
 
   const html = `
     <div style="margin-top:15px">
       <h3>Page ${page}</h3>
-      <img src="${imgPath}" 
-           onerror="this.outerHTML='<p style=color:red>Image not found: ${page}.jpg</p>'">
+      <img src="${imgPath}"
+           loading="lazy"
+           onerror="this.outerHTML='<p style=color:red>Image not found: ${imgPath}</p>'">
     </div>
   `;
 
   resultsDiv.innerHTML += html;
 }
 
+
 </script>
 
 </body>
 </html>
+
