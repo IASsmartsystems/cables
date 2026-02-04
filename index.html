@@ -252,7 +252,7 @@ function renderTable(rows) {
   </tr>`;
 
   rows.forEach(r => {
-    const page = String(r.PAGE).padStart(2, "0");
+    const page = String(r.PAGE).trim().padStart(2, "0");
     html += `<tr>
       <td>${r.PAGE}</td>
       <td>${r.TERMINAL}</td>
@@ -292,4 +292,5 @@ function showImage(page) {
 
 </body>
 </html>
+
 
