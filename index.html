@@ -266,6 +266,7 @@ function renderTable(rows) {
       <td>${r.DESCRIPTION || r.Description || r["DESCRIPTION "] || ""}</td>
       <td><button onclick="showImage('${page}')">Show</button></td>
     </tr>`;
+    console.log("PAGE value:", r.PAGE, "→ image:", page);
   });
 
   html += "</table></div>";
@@ -292,5 +293,6 @@ function showImage(page) {
 
 </body>
 </html>
+
 
 
