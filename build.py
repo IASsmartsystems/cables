@@ -1,43 +1,26 @@
 import pandas as pd
 import json
 
-excel_file = "PLANT MACHINES.xlsx"   # change if needed
-output_file = "equipment_data.js"
+# ===== CONFIG =====
+EXCEL_FILE = "new machines.xlsx"      # your excel file
+SHEET_NAME = 0                 # or "Sheet1"
+OUTPUT_JS = "app_data.js"
+# ==================
 
-# Load Excel
-df = pd.read_excel(excel_file, header=0)
+# Read Excel
+df = pd.read_excel(EXCEL_FILE, sheet_name=SHEET_NAME)
 
-# First column = equipment
-equipment_column = df.columns[0]
-attributes = df.columns[1:]
+# Replace NaN with empty strings
+df = df.fillna("")
 
-result = {}
+# Convert dataframe rows to list of dicts
+records = df.to_dict(orient="records")
 
-for _, row in df.iterrows():
-    equipment = str(row[equipment_column]).strip()
-
-    # Skip empty equipment rows
-    if equipment.lower() == "nan" or equipment == "":
-        continue
-
-    result[equipment] = {}
-
-    for attr in attributes:
-        value = row[attr]
-
-        if pd.isna(value):
-            continue
-
-        # Convert cell like "12, 18, 22" into list
-        pages = [p.strip() for p in str(value).split(",") if p.strip()]
-
-        if pages:
-            result[equipment][attr] = pages
-
-# Write to JS file
-with open(output_file, "w", encoding="utf-8") as f:
-    f.write("const EQUIPMENT_DATA = ")
-    json.dump(result, f, indent=2)
+# Write JS file
+with open(OUTPUT_JS, "w", encoding="utf-8") as f:
+    f.write("const APP_DATA = ")
+    json.dump(records, f, indent=2)
     f.write(";")
 
-print("Done! Created equipment_data.js")
+print(f"✅ {OUTPUT_JS} generated successfully!")
+print(f"📄 Rows exported: {len(records)}")
