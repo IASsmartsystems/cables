@@ -2,6 +2,7 @@
 <html>
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Manual Reference App</title>
 <style>
 
@@ -56,12 +57,81 @@
   color: #ff6b6b;
 }
 
-body { font-family: Arial; padding: 10px; }
-select, input, button { padding: 8px; margin: 5px 0; width: 100%; }
-table { border-collapse: collapse; width: 100%; font-size: 12px; }
-th, td { border: 1px solid #ccc; padding: 4px; }
-th { background: #eee; }
-img { max-width: 100%; margin-top: 10px; }
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 12px;
+  background: #0b0f14;
+  color: #e6f1ff;
+}
+
+h2, h3 {
+  margin-top: 10px;
+}
+
+input, select, button {
+  width: 100%;
+  padding: 12px;
+  margin: 8px 0;
+  border-radius: 10px;
+  border: none;
+  font-size: 16px; /* prevents iOS zoom */
+}
+
+button {
+  background: #00e5ff;
+  color: #000;
+  font-weight: bold;
+}
+
+button:hover {
+  opacity: 0.9;
+}
+.table-wrap {
+  overflow-x: auto;
+  margin-top: 10px;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 900px;
+  font-size: 12px;
+}
+
+th, td {
+  padding: 6px;
+  border: 1px solid #2a2f3a;
+}
+
+th {
+  background: #121826;
+  position: sticky;
+  top: 0;
+}
+
+img { 
+  max-width: 100%; 
+  border-radius: 12px; 
+  margin-top: 10px; 
+}
+
+.lock-card {
+  max-width: 340px;
+  width: 95%;
+}
+
+@media (min-width: 768px) {
+  body {
+    max-width: 1100px;
+    margin: auto;
+  }
+
+  input, select, button {
+    max-width: 420px;
+  }
+}
+
 </style>
 </head>
 <body>
@@ -69,7 +139,14 @@ img { max-width: 100%; margin-top: 10px; }
   <div class="lock-card">
     <h2>🔒 Restricted Access</h2>
     <p id="projectName"></p>
-    <input type="password" id="passwordInput" placeholder="Enter password">
+    <div style="position: relative;">
+  <input type="password" id="passwordInput" placeholder="Enter password">
+  <span onclick="togglePassword()" 
+        style="position:absolute; right:14px; top:50%; transform:translateY(-50%); cursor:pointer;">
+    👁️
+  </span>
+</div>
+
     <button onclick="unlock()">Unlock</button>
     <p id="errorMsg"></p>
   </div>
@@ -110,14 +187,19 @@ document.getElementById("projectName").textContent = PROJECT_NAME;
 function unlock() {
   const input = document.getElementById("passwordInput").value;
   if (input === PASSWORD) {
-    sessionStorage.setItem("p1_unlocked", "yes");
+    sessionStorage.setItem("p2_unlocked", "yes");
     document.getElementById("lockScreen").style.display = "none";
   } else {
     document.getElementById("errorMsg").textContent = "Incorrect password";
   }
 }
 
-if (sessionStorage.getItem("p1_unlocked") === "yes") {
+function togglePassword() {
+  const input = document.getElementById("passwordInput");
+  input.type = input.type === "password" ? "text" : "password";
+}
+
+if (sessionStorage.getItem("p2_unlocked") === "yes") {
   document.getElementById("lockScreen").style.display = "none";
 }
 // Populate PROCESS dropdown
@@ -163,7 +245,7 @@ function renderTable(rows) {
     return;
   }
 
-  let html = `<table><tr>
+  let html = `<div class="table-wrap"><table><tr>
     <th>PAGE</th><th>TERMINAL</th><th>CONTACT</th><th>WIRE</th>
     <th>CABLE</th><th>CONNECTION</th><th>POLARITY</th>
     <th>PROCESS</th><th>TAG</th><th>DESCRIPTION</th><th>IMAGE</th>
@@ -181,19 +263,29 @@ function renderTable(rows) {
       <td>${r.POLARITY}</td>
       <td>${r.PROCESS}</td>
       <td>${r.TAG}</td>
-      <td>${r.DESCRIPTION}</td>
+      <td>${r.DESCRIPTION || r.Description || r["DESCRIPTION "] || ""}</td>
       <td><button onclick="showImage('${page}')">Show</button></td>
     </tr>`;
   });
 
-  html += "</table>";
+  html += "</table></div>";
   resultsDiv.innerHTML = html;
 }
 
 function showImage(page) {
-  const img = `<h3>Page ${page}</h3><img src="../images/${page}.jpg">`;
-  resultsDiv.innerHTML += img;
+  const imgPath = `../images/${page}.jpg`;
+
+  const html = `
+    <div style="margin-top:15px">
+      <h3>Page ${page}</h3>
+      <img src="${imgPath}" 
+           onerror="this.outerHTML='<p style=color:red>Image not found: ${page}.jpg</p>'">
+    </div>
+  `;
+
+  resultsDiv.innerHTML += html;
 }
+
 </script>
 
 </body>
