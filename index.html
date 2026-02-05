@@ -132,6 +132,13 @@ img {
   }
 }
 
+#toggleEye {
+  transition: transform 0.2s ease, opacity 0.2s ease;
+}
+#toggleEye:active {
+  transform: translateY(-50%) scale(1.15);
+}
+
 </style>
 </head>
 <body>
@@ -139,13 +146,15 @@ img {
   <div class="lock-card">
     <h2>🔒 Restricted Access</h2>
     <p id="projectName"></p>
-    <div style="position: relative;">
+  <div style="position:relative;">
   <input type="password" id="passwordInput" placeholder="Enter password">
-  <span onclick="togglePassword()" 
-        style="position:absolute; right:14px; top:50%; transform:translateY(-50%); cursor:pointer;">
-    👁️
+  <span id="toggleEye"
+        onclick="togglePassword()"
+        style="position:absolute; right:14px; top:50%; transform:translateY(-50%); cursor:pointer; color: #000; font-size: 14px; font-weight: 600px; user-select: none;">
+    SHOW
   </span>
 </div>
+
 
     <button onclick="unlock()">Unlock</button>
     <p id="errorMsg"></p>
@@ -194,9 +203,18 @@ function unlock() {
   }
 }
 
+
 function togglePassword() {
   const input = document.getElementById("passwordInput");
-  input.type = input.type === "password" ? "text" : "password";
+  const eye = document.getElementById("toggleEye");
+
+  if (input.type === "password") {
+    input.type = "text";
+    eye.textContent = "HIDE";   // hidden eye
+  } else {
+    input.type = "password";
+    eye.textContent = "SHOW";   // visible eye
+  }
 }
 
 if (sessionStorage.getItem("p2_unlocked") === "yes") {
